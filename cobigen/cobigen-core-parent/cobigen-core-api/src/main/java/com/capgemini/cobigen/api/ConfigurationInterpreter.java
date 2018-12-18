@@ -58,4 +58,6 @@ public interface ConfigurationInterpreter {
      */
     public Path resolveTemplateDestinationPath(Path targetRootPath, TemplateTo template, Object input);
 
+    public List<IncrementTo> getAllIncrements();
+
 }

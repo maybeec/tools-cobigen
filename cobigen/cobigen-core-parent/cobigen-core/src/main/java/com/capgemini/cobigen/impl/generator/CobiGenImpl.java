@@ -9,6 +9,7 @@ import java.util.Objects;
 import com.capgemini.cobigen.api.CobiGen;
 import com.capgemini.cobigen.api.ConfigurationInterpreter;
 import com.capgemini.cobigen.api.InputInterpreter;
+import com.capgemini.cobigen.api.PatternDetector;
 import com.capgemini.cobigen.api.exception.CobiGenRuntimeException;
 import com.capgemini.cobigen.api.exception.InputReaderException;
 import com.capgemini.cobigen.api.exception.InvalidConfigurationException;
@@ -16,11 +17,13 @@ import com.capgemini.cobigen.api.extension.ModelBuilder;
 import com.capgemini.cobigen.api.to.GenerableArtifact;
 import com.capgemini.cobigen.api.to.GenerationReportTo;
 import com.capgemini.cobigen.api.to.IncrementTo;
+import com.capgemini.cobigen.api.to.PatternMatch;
 import com.capgemini.cobigen.api.to.TemplateTo;
 import com.capgemini.cobigen.impl.annotation.ProxyFactory;
 import com.capgemini.cobigen.impl.config.ConfigurationHolder;
 import com.capgemini.cobigen.impl.config.ContextConfiguration;
 import com.capgemini.cobigen.impl.config.entity.Trigger;
+import com.capgemini.cobigen.impl.detection.PatternDetectorImpl;
 import com.capgemini.cobigen.impl.model.ModelBuilderImpl;
 import com.google.common.collect.Lists;
 
@@ -43,6 +46,8 @@ public class CobiGenImpl implements CobiGen {
      */
     private InputInterpreter inputInterpreter;
 
+    private PatternDetector patternDetector;
+
     /**
      * Creates a new {@link CobiGen} with a given {@link ContextConfiguration}.
      *
@@ -53,10 +58,12 @@ public class CobiGenImpl implements CobiGen {
         this.configurationHolder = configurationHolder;
 
         // Create proxy of ConfigurationInterpreter to cache method calls
-        ConfigurationInterpreterImpl configurationInterpreterImplProxy =
+        ConfigurationInterpreterImpl configurationInterpreterProxy =
             ProxyFactory.getProxy(new ConfigurationInterpreterImpl(configurationHolder));
-        configurationInterpreter = configurationInterpreterImplProxy;
-        inputInterpreter = ProxyFactory.getProxy(new InputInterpreterImpl(configurationInterpreterImplProxy));
+        configurationInterpreter = configurationInterpreterProxy;
+
+        inputInterpreter = ProxyFactory.getProxy(new InputInterpreterImpl(configurationInterpreterProxy));
+        patternDetector = ProxyFactory.getProxy(new PatternDetectorImpl(configurationHolder));
     }
 
     @Override
@@ -180,6 +187,21 @@ public class CobiGenImpl implements CobiGen {
     @Override
     public Path resolveTemplateDestinationPath(Path targetRootPath, TemplateTo template, Object input) {
         return configurationInterpreter.resolveTemplateDestinationPath(targetRootPath, template, input);
+    }
+
+    @Override
+    public List<IncrementTo> getAllIncrements() {
+        return configurationInterpreter.getAllIncrements();
+    }
+
+    @Override
+    public List<PatternMatch> detect(IncrementTo increment, List<Path> applicationFiles, Path applicationRoot) {
+        return patternDetector.detect(increment, applicationFiles, applicationRoot);
+    }
+
+    @Override
+    public List<PatternMatch> detect(IncrementTo increment, Path applicationFilesSearchPath, Path applicationRoot) {
+        return patternDetector.detect(increment, applicationFilesSearchPath, applicationRoot);
     }
 
 }
