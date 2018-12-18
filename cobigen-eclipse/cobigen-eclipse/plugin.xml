@@ -8,8 +8,12 @@
             name="Generate">
       </command>
       <command
-            id="com.capgemini.cobigen.eclipseplugin.healthy_check"
-            name="Healthy Check">
+            id="com.capgemini.cobigen.eclipseplugin.health_check"
+            name="Health Check">
+      </command>
+      <command
+            id="com.capgemini.cobigen.eclipseplugin.detect_pattern"
+            name="Detect Pattern">
       </command>
    </extension>
    <extension
@@ -21,6 +25,10 @@
       <handler
             class="com.capgemini.cobigen.eclipse.workbenchcontrol.handler.HealthCheckHandler"
             commandId="com.capgemini.cobigen.eclipseplugin.health_check">
+      </handler>
+      <handler
+            class="com.capgemini.cobigen.eclipse.workbenchcontrol.handler.DetectPatternHandler"
+            commandId="com.capgemini.cobigen.eclipseplugin.detect_pattern">
       </handler>
    </extension>
    <extension
@@ -42,6 +50,11 @@
             <command
                   commandId="com.capgemini.cobigen.eclipseplugin.health_check"
                   label="Health Check..."
+                  style="push">
+            </command>
+            <command
+                  commandId="com.capgemini.cobigen.eclipseplugin.detect_pattern"
+                  label="Detect Pattern..."
                   style="push">
             </command>
          </menu>
@@ -67,6 +80,11 @@
             <command
                   commandId="com.capgemini.cobigen.eclipseplugin.health_check"
                   label="Health Check..."
+                  style="push">
+            </command>
+            <command
+                  commandId="com.capgemini.cobigen.eclipseplugin.detect_pattern"
+                  label="Detect Pattern..."
                   style="push">
             </command>
          </menu>
